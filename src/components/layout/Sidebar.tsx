@@ -25,9 +25,7 @@ const navItems = [
     { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
-const adminItems = [
-    { href: '/admin', label: 'Admin Panel', icon: ShieldCheck },
-];
+const adminItems: any[] = [];
 
 export default function Sidebar() {
     const pathname = usePathname();
