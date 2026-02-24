@@ -4,18 +4,27 @@ import type { NextRequest } from 'next/server';
 const PUBLIC_ROUTES = [
     '/login',
     '/register',
+    '/verify-email',
     '/mfa-verify',
+    '/mfa-backup-code',
     '/forgot-password',
 ];
 
-const AUTH_ONLY_ROUTES = ['/org-select'];
+const PROTECTED_PREFIXES = [
+    '/dashboard',
+    '/cases',
+    '/chat',
+    '/organization',
+    '/billing',
+    '/settings',
+    '/notifications',
+    '/professionals',
+];
 
 export function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
-    return NextResponse.next();
-
-    // Allow public assets
+    // Allow public assets & API
     if (
         pathname.startsWith('/_next') ||
         pathname.startsWith('/api') ||
@@ -26,15 +35,9 @@ export function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // Check for auth token in cookies (we'll also set it there)
     const token = request.cookies.get('jl-access-token')?.value;
-
-    const isPublic = PUBLIC_ROUTES.some((r) => pathname.startsWith(r));
-    const isDashboard = pathname.startsWith('/dashboard') || pathname.startsWith('/cases') ||
-        pathname.startsWith('/chat') || pathname.startsWith('/organization') ||
-        pathname.startsWith('/billing') || pathname.startsWith('/settings') ||
-        pathname.startsWith('/notifications') || pathname.startsWith('/professionals') ||
-        pathname.startsWith('/admin');
+    const isPublic = PUBLIC_ROUTES.some((r) => pathname === r || pathname.startsWith(r + '?'));
+    const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
 
     // Redirect authenticated users away from auth pages
     if (token && isPublic) {
@@ -42,14 +45,14 @@ export function middleware(request: NextRequest) {
     }
 
     // Redirect unauthenticated users from protected pages
-    if (!token && isDashboard) {
+    if (!token && isProtected) {
         const url = new URL('/login', request.url);
         url.searchParams.set('redirect', pathname);
         return NextResponse.redirect(url);
     }
 
     // Require token for org-select
-    if (!token && AUTH_ONLY_ROUTES.includes(pathname)) {
+    if (!token && pathname === '/org-select') {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
