@@ -53,7 +53,7 @@ function MfaVerifyContent() {
         <div className="glass rounded-2xl p-8 shadow-glass animate-fade-in">
             <div className="text-center mb-8">
                 <div className="w-14 h-14 rounded-2xl brand-gradient flex items-center justify-center mx-auto mb-4 shadow-lg shadow-primary/20">
-                    <Shield className="h-7 w-7 text-white" />
+                    <Shield className="h-7 w-7 text-primary-foreground" />
                 </div>
                 <h1 className="text-2xl font-bold text-foreground">Two-Factor Authentication</h1>
                 <p className="text-muted-foreground mt-2 text-sm">Enter the 6-digit code from your authenticator app</p>
@@ -72,7 +72,7 @@ function MfaVerifyContent() {
                     />
                     {errors.token && <p className="text-xs text-destructive mt-1 text-center">{errors.token.message}</p>}
                 </div>
-                <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 py-2.5 px-4 brand-gradient text-white font-semibold rounded-lg hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-primary/20">
+                <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 py-2.5 px-4 brand-gradient text-primary-foreground font-semibold rounded-lg hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-primary/20">
                     {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Verify & Sign In →'}
                 </button>
             </form>

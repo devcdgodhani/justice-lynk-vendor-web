@@ -88,7 +88,7 @@ export default function Topbar() {
                             className="flex items-center gap-3 px-4 py-2 bg-muted/40 border border-border/40 rounded-xl hover:bg-muted/70 hover:shadow-md transition-all active:scale-[0.98] group"
                         >
                             <div className="w-6 h-6 rounded-lg brand-gradient flex items-center justify-center shadow-sm">
-                                <span className="text-white text-[10px] font-bold">{activeOrg.name.charAt(0)}</span>
+                                <span className="text-primary-foreground text-[10px] font-bold">{activeOrg.name.charAt(0)}</span>
                             </div>
                             <span className="font-semibold text-sm text-foreground/80 group-hover:text-foreground">{activeOrg.name}</span>
                             <ChevronDown className={cn("h-4 w-4 text-muted-foreground transition-transform duration-200", orgMenuOpen && "rotate-180")} />
@@ -105,7 +105,7 @@ export default function Topbar() {
                                                 org.id === activeOrg.id ? 'bg-primary/5 text-primary shadow-sm ring-1 ring-primary/10' : 'hover:bg-muted text-foreground/70 hover:text-foreground',
                                             )}>
                                             <div className="w-7 h-7 rounded-lg brand-gradient flex items-center justify-center flex-shrink-0 shadow-sm">
-                                                <span className="text-white text-xs font-bold">{org.name.charAt(0)}</span>
+                                                <span className="text-primary-foreground text-xs font-bold">{org.name.charAt(0)}</span>
                                             </div>
                                             <span className="font-semibold truncate">{org.name}</span>
                                             {org.id === activeOrg.id && (
@@ -196,7 +196,7 @@ export default function Topbar() {
                                 <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-tighter mt-1">{user.role}</p>
                             </div>
                             <div className="w-8 h-8 rounded-full brand-gradient flex items-center justify-center shadow-sm">
-                                <span className="text-white text-[10px] font-bold">{getInitials(user.firstName, user.lastName)}</span>
+                                <span className="text-primary-foreground text-[10px] font-bold">{getInitials(user.firstName, user.lastName)}</span>
                             </div>
                         </button>
 

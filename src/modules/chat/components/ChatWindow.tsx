@@ -60,12 +60,12 @@ export default function ChatWindow({ caseId }: ChatWindowProps) {
                 </div>
                 <div className="flex items-center gap-2">
                     {connected ? (
-                        <Badge variant="outline" className="bg-success/10 text-success border-success/20 px-2 py-0.5 rounded-lg flex items-center gap-1.5 shadow-[0_0_8px_hsl(var(--success)/0.2)]">
+                        <Badge variant="success" className="px-2 py-0.5 rounded-lg flex items-center gap-1.5 shadow-[0_0_8px_hsl(var(--success)/0.2)]">
                             <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse shadow-[0_0_4px_hsl(var(--success))]" />
                             <span className="text-[10px] font-bold tracking-wider uppercase">Live</span>
                         </Badge>
                     ) : (
-                        <Badge variant="outline" className="bg-destructive/10 text-destructive border-destructive/20 px-2 py-0.5 rounded-lg flex items-center gap-1.5">
+                            <Badge variant="destructive" className="bg-destructive/10 text-destructive border-destructive/20 px-2 py-0.5 rounded-lg flex items-center gap-1.5">
                             <WifiOff className="h-3 w-3" />
                             <span className="text-[10px] font-bold tracking-wider uppercase">Offline</span>
                         </Badge>

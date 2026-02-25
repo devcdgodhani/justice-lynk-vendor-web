@@ -79,13 +79,13 @@ export default function RegisterPage() {
                         >
                             {userType === type && (
                                 <div className="absolute top-2 right-2 w-5 h-5 rounded-full brand-gradient flex items-center justify-center">
-                                    <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg className="w-3 h-3 text-primary-foreground" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
                                 </div>
                             )}
                             <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${userType === type ? 'brand-gradient' : 'bg-muted'}`}>
-                                <Icon className={`w-6 h-6 ${userType === type ? 'text-white' : 'text-muted-foreground'}`} />
+                                <Icon className={`w-6 h-6 ${userType === type ? 'text-primary-foreground' : 'text-muted-foreground'}`} />
                             </div>
                             <div className="text-center">
                                 <p className="font-semibold text-foreground">{label}</p>
@@ -95,7 +95,7 @@ export default function RegisterPage() {
                     ))}
                 </div>
 
-                <button onClick={() => setStep('form')} className="w-full flex items-center justify-center gap-2 py-2.5 px-4 brand-gradient text-white font-semibold rounded-lg hover:opacity-90 transition-all shadow-lg shadow-primary/20">
+                <button onClick={() => setStep('form')} className="w-full flex items-center justify-center gap-2 py-2.5 px-4 brand-gradient text-primary-foreground font-semibold rounded-lg hover:opacity-90 transition-all shadow-lg shadow-primary/20">
                     Continue as {userType === 'client' ? 'Client' : 'Professional'} →
                 </button>
 
@@ -154,7 +154,7 @@ export default function RegisterPage() {
                     <input {...register('confirm')} type="password" placeholder="Repeat password" className="w-full px-4 py-2.5 bg-muted/50 border border-border rounded-lg text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all" />
                     {errors.confirm && <p className="text-xs text-destructive mt-1">{errors.confirm.message}</p>}
                 </div>
-                <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 py-2.5 px-4 brand-gradient text-white font-semibold rounded-lg hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-primary/20 mt-2">
+                <button type="submit" disabled={loading} className="w-full flex items-center justify-center gap-2 py-2.5 px-4 brand-gradient text-primary-foreground font-semibold rounded-lg hover:opacity-90 transition-all disabled:opacity-50 shadow-lg shadow-primary/20 mt-2">
                     {loading ? <><Loader2 className="w-4 h-4 animate-spin" /> Creating…</> : 'Create Account →'}
                 </button>
             </form>

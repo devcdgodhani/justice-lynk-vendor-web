@@ -333,7 +333,7 @@ export default function CaseDetailPage() {
                                 {caseData.assignments.map((a) => (
                                     <Card key={a.id} className="rounded-3xl border-none shadow-lg hover:shadow-xl transition-all">
                                         <CardContent className="p-6 flex items-center gap-5">
-                                            <div className="w-16 h-16 rounded-full brand-gradient flex items-center justify-center text-xl font-bold text-white shadow-lg">
+                                            <div className="w-16 h-16 rounded-full brand-gradient flex items-center justify-center text-xl font-bold text-primary-foreground shadow-lg">
                                                 P
                                             </div>
                                             <div className="flex-1">
