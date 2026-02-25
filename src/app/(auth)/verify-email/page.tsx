@@ -58,7 +58,6 @@ function VerifyEmailContent() {
             const res = await authApi.verifyEmail({ email, otp: code });
             const { user, accessToken, refreshToken } = res.data;
             if (accessToken) {
-                document.cookie = `jl-access-token=${accessToken}; path=/; max-age=900; SameSite=Strict`;
                 setAuth(user!, accessToken, refreshToken!);
             }
             setVerified(true);
