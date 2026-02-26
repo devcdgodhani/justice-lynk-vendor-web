@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Plus, Search, Filter, Loader2, Briefcase, MoreHorizontal, ChevronRight } from 'lucide-react';
+import { Plus, Search, Loader2, Briefcase, ChevronRight, Scale } from 'lucide-react';
 import { useAuthStore } from '@/store/auth.store';
 import { useCases } from '@/modules/cases/hooks/useCases';
 import { cn, formatDate, debounce } from '@/lib/utils';
@@ -11,7 +11,15 @@ import { CaseStatus, CaseType } from '@/types';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
 const STATUSES: CaseStatus[] = ['OPEN', 'IN_PROGRESS', 'PENDING', 'CLOSED', 'ARCHIVED'];
 const TYPES: CaseType[] = ['CIVIL', 'CRIMINAL', 'CORPORATE', 'FAMILY', 'PROPERTY', 'LABOUR', 'OTHER'];
@@ -27,6 +35,15 @@ export default function CasesPage() {
 
     const { data, isLoading, isError } = useCases({ page, limit, status, type, search });
 
+    const items = data?.items ?? [];
+    const total = data?.meta?.total ?? 0;
+    const totalPages = data?.meta?.totalPages ?? 1;
+
+    const debouncedSearch = useCallback(
+        debounce((val: unknown) => { setSearch(val as string); setPage(1); }, 400),
+        []
+    );
+
     if (!isHydrated) {
         return (
             <div className="flex flex-col items-center justify-center py-32 gap-4">
@@ -35,15 +52,6 @@ export default function CasesPage() {
             </div>
         );
     }
-
-    const items = data?.items ?? [];
-    const total = data?.total ?? 0;
-    const totalPages = data?.totalPages ?? 1;
-
-    const debouncedSearch = useCallback(
-        debounce((val: unknown) => { setSearch(val as string); setPage(1); }, 400),
-        []
-    );
 
     return (
         <div className="centered-container py-10 space-y-10 animate-fade-in">
@@ -68,30 +76,41 @@ export default function CasesPage() {
             {/* Premium Filter Command Bar */}
             <div className="glass rounded-[2rem] p-6 flex flex-col lg:flex-row gap-4 items-center border-none shadow-2xl shadow-primary/[0.02]">
                 <div className="relative flex-1 w-full group">
-                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
-                    <input
+                    <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors z-10" />
+                    <Input
                         placeholder="SEARCH VAULT..."
                         onChange={(e) => debouncedSearch(e.target.value)}
-                        className="w-full pl-14 pr-6 h-14 bg-muted/40 border border-border/40 rounded-2xl text-sm font-bold text-foreground placeholder:text-muted-foreground/30 placeholder:tracking-[0.2em] focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/40 focus:bg-card transition-all duration-300"
+                        className="pl-14 h-14 bg-muted/40 border border-border/40 rounded-2xl text-xs font-bold text-foreground placeholder:text-muted-foreground/30 placeholder:tracking-[0.2em] focus:ring-4 focus:ring-primary/5 focus:border-primary/40 focus:bg-card transition-all duration-300"
                     />
                 </div>
                 <div className="flex gap-4 w-full lg:w-auto">
-                    <select
-                        value={status}
-                        onChange={(e) => { setStatus(e.target.value); setPage(1); }}
-                        className="flex-1 lg:w-48 h-14 px-5 bg-muted/40 border border-border/40 rounded-2xl text-xs font-bold text-foreground focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/40 transition-all cursor-pointer appearance-none focus:bg-card"
-                    >
-                        <option value="">ALL STATUSES</option>
-                        {STATUSES.map(s => <option key={s} value={s}>{CASE_STATUS_LABELS[s]}</option>)}
-                    </select>
-                    <select
-                        value={type}
-                        onChange={(e) => { setType(e.target.value); setPage(1); }}
-                        className="flex-1 lg:w-48 h-14 px-5 bg-muted/40 border border-border/40 rounded-2xl text-xs font-bold text-foreground focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/40 transition-all cursor-pointer appearance-none focus:bg-card"
-                    >
-                        <option value="">ALL TYPES</option>
-                        {TYPES.map(t => <option key={t} value={t}>{CASE_TYPE_LABELS[t]}</option>)}
-                    </select>
+                    <Select value={status} onValueChange={(val) => { setStatus(val === 'ALL' ? '' : val); setPage(1); }}>
+                        <SelectTrigger className="flex-1 lg:w-48 h-14 px-6 bg-muted/40 border-border/40 rounded-2xl text-[10px] font-bold tracking-widest uppercase">
+                            <SelectValue placeholder="ALL STATUSES" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-2xl border-border/40 shadow-2xl">
+                            <SelectItem value="ALL" className="text-[10px] font-bold uppercase tracking-widest">ALL STATUSES</SelectItem>
+                            {STATUSES.map(s => (
+                                <SelectItem key={s} value={s} className="text-[10px] font-bold uppercase tracking-widest">
+                                    {CASE_STATUS_LABELS[s]}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+
+                    <Select value={type} onValueChange={(val) => { setType(val === 'ALL' ? '' : val); setPage(1); }}>
+                        <SelectTrigger className="flex-1 lg:w-48 h-14 px-6 bg-muted/40 border-border/40 rounded-2xl text-[10px] font-bold tracking-widest uppercase">
+                            <SelectValue placeholder="ALL TYPES" />
+                        </SelectTrigger>
+                        <SelectContent className="rounded-2xl border-border/40 shadow-2xl">
+                            <SelectItem value="ALL" className="text-[10px] font-bold uppercase tracking-widest">ALL TYPES</SelectItem>
+                            {TYPES.map(t => (
+                                <SelectItem key={t} value={t} className="text-[10px] font-bold uppercase tracking-widest">
+                                    {CASE_TYPE_LABELS[t]}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
             </div>
 

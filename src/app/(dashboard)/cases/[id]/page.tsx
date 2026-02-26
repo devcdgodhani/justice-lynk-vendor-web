@@ -10,7 +10,7 @@ import { CaseStatus } from '@/types';
 import {
     ArrowLeft, Loader2, MessageSquare, FileText, Users,
     Clock, Calendar, MapPin, Trash2, Shield, Share2,
-    MoreHorizontal, Download, ExternalLink, Scale, Plus
+    MoreHorizontal, Download, ExternalLink, Scale, Plus, History
 } from 'lucide-react';
 import {
     AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -22,6 +22,13 @@ import { toast } from 'sonner';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 
 const tabs = [
     { id: 'Overview', icon: History, label: 'Timeline' },
@@ -218,18 +225,21 @@ export default function CaseDetailPage() {
                                 <CardContent className="p-8 space-y-8">
                                     <div className="space-y-2">
                                         <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">Lifecycle Tracking</label>
-                                        <div className="relative">
-                                            <select
-                                                value={caseData.status}
-                                                onChange={(e) => updateStatus.mutate({ status: e.target.value as CaseStatus })}
-                                                className="w-full h-14 pl-4 pr-10 appearance-none bg-muted/40 border border-border/50 rounded-2xl text-sm font-bold text-foreground focus:ring-4 focus:ring-primary/10 focus:border-primary/40 transition-all cursor-pointer focus:bg-card"
-                                            >
-                                                {STATUSES.map(s => <option key={s} value={s}>{CASE_STATUS_LABELS[s]}</option>)}
-                                            </select>
-                                            <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
-                                                <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
-                                            </div>
-                                        </div>
+                                        <Select
+                                            value={caseData.status}
+                                            onValueChange={(val) => updateStatus.mutate({ status: val as CaseStatus })}
+                                        >
+                                            <SelectTrigger className="h-14 bg-muted/40 border-border/50 rounded-2xl text-[10px] font-bold uppercase tracking-widest px-4 focus:ring-4 focus:ring-primary/10">
+                                                <SelectValue placeholder="SET STATUS" />
+                                            </SelectTrigger>
+                                            <SelectContent className="rounded-2xl border-border/40 shadow-2xl">
+                                                {STATUSES.map(s => (
+                                                    <SelectItem key={s} value={s} className="text-[10px] font-bold uppercase tracking-widest">
+                                                        {CASE_STATUS_LABELS[s]}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                     </div>
 
                                     <div className="space-y-6 pt-4">
@@ -358,6 +368,3 @@ export default function CaseDetailPage() {
         </div>
     );
 }
-
-// Just in case History is not imported
-import { History } from 'lucide-react';

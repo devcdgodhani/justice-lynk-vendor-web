@@ -62,7 +62,6 @@ export const useAuthStore = create<AuthState>()(
             setHydrated: () => set({ isHydrated: true }),
 
             can: (permissionKey: string) => {
-                return true;
                 const { permissions, user } = get();
                 if (user?.role === 'super_admin') return true;
                 return permissions.includes(permissionKey);

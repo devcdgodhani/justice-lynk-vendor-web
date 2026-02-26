@@ -24,12 +24,18 @@ export interface ApiResponse<T> {
     data: T;
 }
 
-export interface PaginatedData<T> {
-    items: T[];
+export interface PaginationMeta {
     total: number;
     page: number;
     limit: number;
     totalPages: number;
+    hasNextPage: boolean;
+    hasPrevPage: boolean;
+}
+
+export interface PaginatedData<T> {
+    items: T[];
+    meta: PaginationMeta;
 }
 
 // Simplify to just PaginatedData as the API response wrapper handles the 'data' key
