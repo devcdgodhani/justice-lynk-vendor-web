@@ -30,12 +30,17 @@ export default function OrgSelectPage() {
 
     const handleSelect = (org: Organization) => {
         setActiveOrg(org);
-        router.push('/dashboard');
+
+        // Dynamic redirection after org selection
+        const dashboardMap: Record<string, string> = {
+            client: '/dashboard',
+            advocate: '/professional',
+            law_firm_admin: '/law-firm',
+        };
+        router.push(dashboardMap[user?.userType || 'client'] || '/dashboard');
+
         toast.success(`Switched to ${org.name}`);
     };
-    if (!activeOrg) {
-        handleSelect({ id: '1', name: 'test', type: 'test', createdAt: new Date().toISOString() })
-    }
 
     if (isLoading) {
         return (

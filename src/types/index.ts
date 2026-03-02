@@ -1,5 +1,8 @@
 export interface LoginPayload { email: string; password: string; }
-export interface RegisterPayload { firstName: string; lastName: string; email: string; password: string; phone?: string; userType?: 'client' | 'professional'; }
+export interface RegisterPayload { firstName: string; lastName: string; email: string; password: string; phone?: string; userType?: UserType; }
+export interface RegisterClientPayload extends RegisterPayload { interests?: string[]; }
+export interface RegisterProfessionalPayload extends RegisterPayload { barRegistration?: string; specializations: string[]; experienceYears: number; bio?: string; practiceAreas: string[]; languages?: string[]; location?: string; hourlyRate?: number; }
+export interface RegisterLawFirmPayload extends RegisterPayload { firmName: string; registrationNumber?: string; establishedYear?: number; website?: string; address?: any; specializations?: string[]; description?: string; firmEmail?: string; firmPhone?: string; }
 export interface MfaVerifyPayload { mfaTempToken: string; token: string; }
 export interface MfaBackupCodePayload { mfaTempToken: string; backupCode: string; }
 export interface VerifyEmailOtpPayload { email: string; otp: string; }
@@ -11,6 +14,10 @@ export interface AuthTokens { accessToken: string; refreshToken: string; }
 export interface LoginResult {
     mfaRequired: boolean;
     emailVerificationRequired: boolean;
+    approvalPending?: boolean;
+    approvalRejected?: boolean;
+    suspended?: boolean;
+    approvalNote?: string;
     email?: string;
     mfaTempToken?: string;
     user?: User;
@@ -44,6 +51,7 @@ export type PaginatedResponse<T> = PaginatedData<T>;
 // ─── Enums ──────────────────────────────────────────────────────────────────
 export type CaseStatus = 'OPEN' | 'IN_PROGRESS' | 'PENDING' | 'CLOSED' | 'ARCHIVED';
 export type CaseType = 'CIVIL' | 'CRIMINAL' | 'CORPORATE' | 'FAMILY' | 'PROPERTY' | 'LABOUR' | 'OTHER';
+export type UserType = 'client' | 'advocate' | 'law_firm_admin' | 'admin' | 'super_admin';
 
 // ─── Core Entities ───────────────────────────────────────────────────────────
 export interface User {
@@ -53,9 +61,12 @@ export interface User {
     email: string;
     phone?: string;
     role: string;
+    userType: UserType;
+    approvalStatus: string;
     avatar?: string;
     isActive: boolean;
     isSuperAdmin?: boolean;
+    subscription?: any; // Simplified for now
     createdAt: string;
 }
 
@@ -168,21 +179,54 @@ export interface Notification {
     createdAt: string;
 }
 
+export interface PlanLimit {
+    id: string;
+    planId: string;
+    key: string;
+    value: number;
+}
+
 export interface Plan {
     id: string;
     name: string;
+    slug: string;
     description?: string;
-    price: number;
-    currency: string;
-    billingCycle: string;
+    targetUserType: UserType;
+    monthlyPrice: number;
+    yearlyPrice: number;
+    monthlyOfferPrice?: number;
+    yearlyOfferPrice?: number;
+    monthlyDiscount?: number;
+    yearlyDiscount?: number;
     features?: Record<string, unknown>;
-    maxUsers?: number;
-    maxCases?: number;
+    isActive: boolean;
+    modules: Array<{ module: { name: string; key: string } }>;
+    limits: PlanLimit[];
 }
+
+export interface UserFeature {
+    id: string;
+    name: string;
+    key: string;
+    path?: string;
+    isInPlan: boolean;
+}
+
+export interface UserModule {
+    id: string;
+    name: string;
+    key: string;
+    icon?: string;
+    description?: string;
+    path: string;
+    isInPlan: boolean;
+    features: UserFeature[];
+}
+
 
 export interface Subscription {
     id: string;
-    orgId: string;
+    userId: string;
     planId: string;
     status: string;
     startDate: string;
@@ -192,7 +236,7 @@ export interface Subscription {
 
 export interface Payment {
     id: string;
-    orgId: string;
+    userId: string;
     amount: number;
     currency: string;
     status: string;
@@ -211,16 +255,16 @@ export interface RazorpayOrder {
 export interface Professional {
     id: string;
     userId: string;
-    type: string;
     bio?: string;
-    licenseNumber?: string;
+    barRegistration?: string;
     specializations?: string[];
     experienceYears?: number;
-    city?: string;
-    state?: string;
-    country?: string;
+    location?: string;
     hourlyRate?: number;
-    isVerified: boolean;
+    type?: string;
+    city?: string;
+    isVerified?: boolean;
+    status: string;
     user?: User;
 }
 

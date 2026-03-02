@@ -26,7 +26,7 @@ const TYPES: CaseType[] = ['CIVIL', 'CRIMINAL', 'CORPORATE', 'FAMILY', 'PROPERTY
 
 export default function CasesPage() {
     const router = useRouter();
-    const { can, isHydrated } = useAuthStore();
+    const { isHydrated } = useAuthStore();
     const [search, setSearch] = useState('');
     const [status, setStatus] = useState('');
     const [type, setType] = useState('');
@@ -64,13 +64,11 @@ export default function CasesPage() {
                     <h1 className="text-4xl font-bold font-display tracking-tight text-foreground">Cases</h1>
                     <p className="text-muted-foreground font-medium">{total} total records in vault</p>
                 </div>
-                {can('cases.create') && (
-                    <Button asChild className="rounded-2xl h-14 px-8 font-bold shadow-xl shadow-primary/20">
-                        <Link href="/cases/create">
-                            <Plus className="mr-2 h-5 w-5" /> New Case Intake
-                        </Link>
-                    </Button>
-                )}
+                <Button asChild className="rounded-2xl h-14 px-8 font-bold shadow-xl shadow-primary/20">
+                    <Link href="/cases/create">
+                        <Plus className="mr-2 h-5 w-5" /> New Case Intake
+                    </Link>
+                </Button>
             </div>
 
             {/* Premium Filter Command Bar */}

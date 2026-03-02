@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
-const TYPES = ['LAWYER', 'ADVOCATE', 'CA', 'CONSULTANT', 'NOTARY'];
+const TYPES = ['LAWYER', 'PROFESSIONAL', 'CA', 'CONSULTANT', 'NOTARY'];
 
 const inputCls = 'w-full pl-12 pr-6 py-4 bg-muted/40 border border-border/60 rounded-2xl text-sm font-bold text-foreground placeholder:text-muted-foreground/30 placeholder:uppercase placeholder:text-[10px] placeholder:tracking-[0.2em] focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary/40 focus:bg-card transition-all duration-300';
 

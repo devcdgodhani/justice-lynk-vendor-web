@@ -1,6 +1,7 @@
 import api from './api';
 import {
-    LoginPayload, RegisterPayload, MfaVerifyPayload, MfaBackupCodePayload,
+    LoginPayload, RegisterPayload, RegisterClientPayload, RegisterProfessionalPayload, RegisterLawFirmPayload,
+    MfaVerifyPayload, MfaBackupCodePayload,
     VerifyEmailOtpPayload, ResendOtpPayload,
     ForgotPasswordPayload, VerifyForgotPasswordOtpPayload, ResetPasswordPayload,
     LoginResult, User, ApiResponse, AuthTokens,
@@ -10,6 +11,15 @@ export const authApi = {
     // ── Registration ──────────────────────────────────────────────────────────
     register: (data: RegisterPayload) =>
         api.post<ApiResponse<{ user: User; email: string; message: string }>>('/auth/register', data).then((r) => r.data),
+
+    registerClient: (data: RegisterClientPayload) =>
+        api.post<ApiResponse<{ user: User; email: string; message: string }>>('/auth/register/client', data).then((r) => r.data),
+
+    registerProfessional: (data: RegisterProfessionalPayload) =>
+        api.post<ApiResponse<{ user: User; email: string; message: string }>>('/auth/register/professional', data).then((r) => r.data),
+
+    registerLawFirm: (data: RegisterLawFirmPayload) =>
+        api.post<ApiResponse<{ user: User; email: string; message: string }>>('/auth/register/law-firm', data).then((r) => r.data),
 
     // ── Email OTP ─────────────────────────────────────────────────────────────
     verifyEmail: (data: VerifyEmailOtpPayload) =>

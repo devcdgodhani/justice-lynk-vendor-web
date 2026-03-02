@@ -37,7 +37,12 @@ function MfaBackupContent() {
             setAuth(user!, accessToken!, refreshToken!);
             sessionStorage.removeItem('jl_mfa_temp');
             toast.success('Signed in with backup code');
-            router.replace('/dashboard');
+            const dashboardMap: Record<string, string> = {
+                client: '/dashboard',
+                advocate: '/professional',
+                law_firm_admin: '/law-firm',
+            };
+            router.replace(dashboardMap[user!.userType] || '/dashboard');
         } catch (err: any) {
             toast.error(err?.response?.data?.message || 'Invalid backup code');
         } finally {

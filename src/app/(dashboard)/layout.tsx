@@ -10,20 +10,52 @@ import { cn } from '@/lib/utils';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
     const router = useRouter();
-    const { accessToken, activeOrg, isHydrated } = useAuthStore();
+    const { accessToken, user, activeOrg, isHydrated } = useAuthStore();
     const { sidebarCollapsed } = useUIStore();
 
     useEffect(() => {
-        if (isHydrated && !accessToken) {
+        if (!isHydrated) return;
+
+        if (!accessToken) {
             router.replace('/login');
             return;
         }
-        if (isHydrated && !activeOrg) {
-            router.replace('/org-select');
-        }
-    }, [accessToken, activeOrg, router, isHydrated]);
 
-    if (!isHydrated || !accessToken || !activeOrg) return null;
+        // 1. Approval Status Guards
+        if (user?.approvalStatus === 'pending' || user?.approvalStatus === 'rejected') {
+            router.replace('/account-pending');
+            return;
+        }
+        if (user?.approvalStatus === 'suspended') {
+            router.replace('/account-suspended');
+            return;
+        }
+
+        // 2. Plan / Subscription Guard - Removed (Locked sidebar modules handle plan enforcement)
+        /*
+        const isAdmin = user?.userType === 'admin' || user?.userType === 'super_admin';
+        if (!user?.subscription && !isAdmin) {
+            router.replace('/plan-select');
+            return;
+        }
+        */
+
+        // 3. Organization Select Guard 
+        // Only mandatory for law firm admins or if we are in an org-specific route
+        if (user?.userType === 'law_firm_admin' && !activeOrg) {
+            router.replace('/org-select');
+            return;
+        }
+    }, [accessToken, activeOrg, user, router, isHydrated]);
+
+    if (!isHydrated || !accessToken) return null;
+
+    // Final check before rendering
+    const isAdmin = user?.userType === 'admin' || user?.userType === 'super_admin';
+    const hasStatusIssue = user?.approvalStatus && user?.approvalStatus !== 'approved';
+    const needsOrg = user?.userType === 'law_firm_admin' && !activeOrg;
+
+    if (hasStatusIssue || needsOrg) return null;
 
     return (
         <div className="flex h-screen bg-background overflow-hidden">

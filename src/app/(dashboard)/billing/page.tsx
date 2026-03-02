@@ -125,9 +125,9 @@ export default function BillingPage() {
                         <div className="text-center md:text-right space-y-1">
                             <p className="text-xs font-bold text-white/40 uppercase tracking-widest">BILLING RATE</p>
                             <p className="text-4xl font-bold font-mono">
-                                {subscription.plan ? formatCurrency(subscription.plan.price, subscription.plan.currency) : '—'}
+                                {subscription.plan ? formatCurrency(subscription.plan.monthlyPrice, 'INR') : '—'}
                             </p>
-                            <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">PER {subscription.plan?.billingCycle || 'CYCLE'}</p>
+                            <p className="text-[10px] font-bold text-white/40 uppercase tracking-widest">PER MONTH</p>
                         </div>
                     </div>
                 </Card>
@@ -155,8 +155,8 @@ export default function BillingPage() {
                                         {isCurrent && <Badge variant="premium" className="text-[8px] font-black tracking-widest px-2 py-0">CURRENT</Badge>}
                                     </div>
                                     <div className="flex items-baseline gap-1">
-                                        <span className="text-4xl font-bold font-mono tracking-tighter text-foreground">{formatCurrency(plan.price, plan.currency)}</span>
-                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">/ {plan?.billingCycle?.toLowerCase()}</span>
+                                        <span className="text-4xl font-bold font-mono tracking-tighter text-foreground">{formatCurrency(plan.monthlyPrice, 'INR')}</span>
+                                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">/ MONTH</span>
                                     </div>
                                     {plan.description && <p className="text-sm text-muted-foreground font-medium leading-relaxed italic">"{plan.description}"</p>}
                                 </div>
@@ -164,16 +164,20 @@ export default function BillingPage() {
                                 <div className="space-y-4 flex-1">
                                     <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">PLATFORM CLEARANCE</p>
                                     <div className="space-y-3">
-                                        {plan.maxUsers && (
+                                        {plan.limits?.find(l => l.key === 'maxUsers') && (
                                             <div className="flex items-center gap-3">
                                                 <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
-                                                <span className="text-xs font-bold text-foreground/70 uppercase tracking-wider">{plan.maxUsers} Personnel Terminals</span>
+                                                <span className="text-xs font-bold text-foreground/70 uppercase tracking-wider">
+                                                    {plan.limits.find(l => l.key === 'maxUsers')?.value === -1 ? 'Unlimited' : plan.limits.find(l => l.key === 'maxUsers')?.value} Personnel Terminals
+                                                </span>
                                             </div>
                                         )}
-                                        {plan.maxCases && (
+                                        {plan.limits?.find(l => l.key === 'maxCases') && (
                                             <div className="flex items-center gap-3">
                                                 <CheckCircle2 className="h-4 w-4 text-success shrink-0" />
-                                                <span className="text-xs font-bold text-foreground/70 uppercase tracking-wider">{plan.maxCases} Concurrent Case Vaults</span>
+                                                <span className="text-xs font-bold text-foreground/70 uppercase tracking-wider">
+                                                    {plan.limits.find(l => l.key === 'maxCases')?.value === -1 ? 'Unlimited' : plan.limits.find(l => l.key === 'maxCases')?.value} Concurrent Case Vaults
+                                                </span>
                                             </div>
                                         )}
                                         <div className="flex items-center gap-3">

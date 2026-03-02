@@ -2,8 +2,8 @@ import api from './api';
 import { Payment, RazorpayOrder, ApiResponse, PaginatedResponse } from '@/types';
 
 export const billingApi = {
-    createOrder: (planId: string) =>
-        api.post<ApiResponse<RazorpayOrder>>('/payments/orders', { planId }).then((r) => r.data),
+    createOrder: (planId: string, billingInterval: 'monthly' | 'yearly' = 'monthly') =>
+        api.post<ApiResponse<RazorpayOrder>>('/payments/orders', { planId, billingInterval }).then((r) => r.data),
 
     verifyPayment: (data: {
         razorpayOrderId: string;

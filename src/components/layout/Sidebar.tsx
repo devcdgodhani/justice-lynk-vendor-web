@@ -1,37 +1,44 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
     LayoutDashboard, Briefcase, MessageSquare, Building2,
     CreditCard, Settings, Bell, Users, ShieldCheck,
-    Scale, ChevronLeft, ChevronRight, LogOut,
+    Scale, ChevronLeft, ChevronRight, ChevronDown, LogOut, Lock
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/store/auth.store';
 import { useUIStore } from '@/store/ui.store';
+import { UserModule, UserFeature } from '@/types';
 import { toast } from 'sonner';
 import { authApi } from '@/services/auth.api';
 import { getInitials } from '@/lib/utils';
 
-const navItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/cases', label: 'Cases', icon: Briefcase },
-    { href: '/chat', label: 'Chat', icon: MessageSquare },
-    { href: '/organization', label: 'Organization', icon: Building2 },
-    { href: '/professionals', label: 'Professionals', icon: Scale },
-    { href: '/billing', label: 'Billing', icon: CreditCard },
-    { href: '/notifications', label: 'Notifications', icon: Bell },
-    { href: '/settings', label: 'Settings', icon: Settings },
-];
-
-const adminItems: any[] = [];
+const ICON_MAP: Record<string, any> = {
+    'main.dashboard': LayoutDashboard,
+    'professional.dashboard': LayoutDashboard,
+    'lawfirm.dashboard': LayoutDashboard,
+    'main.cases': Briefcase,
+    'main.chat': MessageSquare,
+    'main.organization': Building2,
+    'main.professionals': Scale,
+    'main.billing': CreditCard,
+    'main.notifications': Bell,
+    'main.settings': Settings,
+};
 
 export default function Sidebar() {
     const pathname = usePathname();
     const router = useRouter();
-    const { user, clearAuth, activeOrg } = useAuthStore();
+    const { user, clearAuth, userModules } = useAuthStore();
     const { sidebarCollapsed, toggleSidebarCollapsed } = useUIStore();
+    const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+    const toggleExpand = (key: string) => {
+        setExpanded(prev => ({ ...prev, [key]: !prev[key] }));
+    };
 
     const handleLogout = async () => {
         try {
@@ -47,7 +54,7 @@ export default function Sidebar() {
     const isActive = (href: string) =>
         href === '/dashboard' ? pathname === '/dashboard' : pathname.startsWith(href);
 
-    const isSuperAdmin = user?.role === 'super_admin';
+    const isSuperAdmin = user?.userType === 'super_admin' || user?.isSuperAdmin;
 
     return (
         <aside className={cn(
@@ -71,51 +78,90 @@ export default function Sidebar() {
 
             {/* Nav items */}
             <nav className="flex-1 overflow-y-auto px-4 py-4 space-y-1.5 scrollbar-premium">
-                {navItems.map(({ href, label, icon: Icon }) => (
-                    <Link
-                        key={href}
-                        href={href}
-                        className={cn(
-                            'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group',
-                            sidebarCollapsed ? 'justify-center' : '',
-                            isActive(href)
-                                ? 'bg-primary-foreground/10 text-primary-foreground shadow-sm ring-1 ring-primary-foreground/20'
-                                : 'text-sidebar-foreground/70 hover:bg-primary-foreground/5 hover:text-sidebar-foreground',
-                        )}
-                        title={sidebarCollapsed ? label : undefined}
-                    >
-                        <Icon className={cn('flex-shrink-0 h-5 w-5 transition-transform group-hover:scale-110', isActive(href) ? 'text-primary' : '')} />
-                        {!sidebarCollapsed && <span className="truncate tracking-wide">{label}</span>}
-                    </Link>
-                ))}
+                {!sidebarCollapsed && (
+                    <div className="px-3 mb-4">
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-sidebar-foreground/30">
+                            Workspace {user?.subscription ? 'Core' : 'Setup'}
+                        </p>
+                    </div>
+                )}
+                {userModules.map((mod: UserModule) => {
+                    const Icon = ICON_MAP[mod.key] || LayoutDashboard;
+                    const isLocked = !mod.isInPlan && !isSuperAdmin;
+                    const href = mod.path || mod.features?.[0]?.path;
+                    const hasSubFeatures = mod.features && mod.features.length > 1;
+                    const isExpanded = expanded[mod.key];
 
-                {isSuperAdmin && (
-                    <>
-                        <div className="pt-6 pb-2">
-                            <div className={cn("h-px bg-primary-foreground/5", sidebarCollapsed ? "mx-2" : "mx-1")} />
-                            {!sidebarCollapsed && (
-                                <p className="mt-4 px-4 text-[10px] font-bold text-primary-foreground/30 uppercase tracking-[0.2em]">Management</p>
+                    return (
+                        <div key={mod.key} className="space-y-1">
+                            <div className="relative group">
+                                <Link
+                                    href={isLocked ? '/plan-select' : (href || '#')}
+                                    onClick={(e) => {
+                                        if (hasSubFeatures && !sidebarCollapsed) {
+                                            // Optional: let them toggle expand instead of navigating if it has sub-features? 
+                                            // Actually, usually click takes you to first feature, but we'll toggle expand too.
+                                            toggleExpand(mod.key);
+                                        }
+                                    }}
+                                    className={cn(
+                                        'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group uppercase',
+                                        sidebarCollapsed ? 'justify-center' : '',
+                                        isLocked ? 'text-sidebar-foreground/30 cursor-pointer' : (
+                                            isActive(href || '#')
+                                                ? 'bg-primary-foreground/10 text-primary-foreground shadow-sm ring-1 ring-primary-foreground/20'
+                                                : 'text-sidebar-foreground/70 hover:bg-primary-foreground/5 hover:text-sidebar-foreground'
+                                        )
+                                    )}
+                                    title={sidebarCollapsed ? (isLocked ? `${mod.name} (Locked)` : mod.name) : undefined}
+                                >
+                                    <Icon className={cn('flex-shrink-0 h-5 w-5 transition-transform group-hover:scale-110', isActive(href || '#') && !isLocked ? 'text-primary' : '')} />
+                                    {!sidebarCollapsed && <span className="truncate tracking-wide">{mod.name}</span>}
+                                    {!sidebarCollapsed && isLocked && <Lock className="ml-auto h-3.5 w-3.5 text-primary/60" />}
+                                    {!sidebarCollapsed && !isLocked && hasSubFeatures && (
+                                        <ChevronDown className={cn("ml-auto h-3.5 w-3.5 text-sidebar-foreground/40 transition-transform duration-200", isExpanded && "rotate-180")} />
+                                    )}
+                                </Link>
+                                {isLocked && (
+                                    <Link
+                                        href="/plan-select"
+                                        className="absolute inset-0 z-10 cursor-pointer pointer-events-auto"
+                                        title="Upgrade plan to access"
+                                    />
+                                )}
+                            </div>
+
+                            {/* Sub-features - Visible even if locked to show what's available */}
+                            {!sidebarCollapsed && hasSubFeatures && isExpanded && (
+                                <div className="ml-9 space-y-1 border-l-2 border-primary-foreground/5 pl-2 animate-fade-in">
+                                    {mod.features.map((feat: UserFeature) => {
+                                        const featHref = isLocked ? '/plan-select' : (feat.path || href);
+                                        const isFeatLocked = isLocked || (!feat.isInPlan && !isSuperAdmin);
+                                        // Skip if path is same as parent and index is 0 (it's the 'overview' we already link at top level)
+                                        // Actually, let's just show all distinct ones
+                                        return (
+                                            <Link
+                                                key={feat.key}
+                                                href={featHref || '#'}
+                                                className={cn(
+                                                    "block py-2 px-3 text-xs font-semibold rounded-lg transition-all duration-200",
+                                                    isFeatLocked
+                                                        ? "text-sidebar-foreground/30 cursor-pointer"
+                                                        : (pathname === featHref
+                                                            ? "text-primary-foreground bg-primary/10"
+                                                            : "text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-primary-foreground/5"
+                                                        )
+                                                )}
+                                            >
+                                                {feat.name}
+                                            </Link>
+                                        );
+                                    })}
+                                </div>
                             )}
                         </div>
-                        {adminItems.map(({ href, label, icon: Icon }) => (
-                            <Link
-                                key={href}
-                                href={href}
-                                className={cn(
-                                    'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 group',
-                                    sidebarCollapsed ? 'justify-center' : '',
-                                    isActive(href)
-                                        ? 'bg-primary-foreground/10 text-primary-foreground shadow-sm ring-1 ring-primary-foreground/20'
-                                        : 'text-sidebar-foreground/70 hover:bg-primary-foreground/5 hover:text-sidebar-foreground',
-                                )}
-                                title={sidebarCollapsed ? label : undefined}
-                            >
-                                <Icon className={cn('flex-shrink-0 h-5 w-5', isActive(href) ? 'text-primary' : '')} />
-                                {!sidebarCollapsed && <span className="truncate tracking-wide">{label}</span>}
-                            </Link>
-                        ))}
-                    </>
-                )}
+                    );
+                })}
             </nav>
 
             {/* User section */}

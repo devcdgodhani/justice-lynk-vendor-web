@@ -41,7 +41,12 @@ function MfaVerifyContent() {
             setAuth(user!, accessToken!, refreshToken!);
             sessionStorage.removeItem('jl_mfa_temp');
             toast.success('Verified successfully!');
-            router.replace('/dashboard');
+            const dashboardMap: Record<string, string> = {
+                client: '/dashboard',
+                advocate: '/professional',
+                law_firm_admin: '/law-firm',
+            };
+            router.replace(dashboardMap[user!.userType] || '/dashboard');
         } catch (err: any) {
             toast.error(err?.response?.data?.message || 'Invalid MFA code');
         } finally {

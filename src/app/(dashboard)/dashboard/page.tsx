@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 
 export default function DashboardPage() {
-    const { user, activeOrg, can } = useAuthStore();
+    const { user, activeOrg } = useAuthStore();
 
     const { data: casesRes, isLoading } = useQuery({
         queryKey: ['cases', 'recent', activeOrg?.id],
@@ -21,7 +21,7 @@ export default function DashboardPage() {
     });
 
     const cases = casesRes?.data?.items ?? [];
-    const totalCases = casesRes?.data?.total ?? 0;
+    const totalCases = casesRes?.data?.meta?.total ?? 0;
 
     const stats = [
         { label: 'Active Cases', value: totalCases, icon: Briefcase, trend: '+12%', color: 'text-primary' },
@@ -42,14 +42,12 @@ export default function DashboardPage() {
                         Monitor your legal operations across <span className="text-foreground font-semibold">{activeOrg?.name}</span>.
                     </p>
                 </div>
-                {can('cases.create') && (
-                    <Button asChild size="lg" className="shadow-lg shadow-primary/20">
-                        <Link href="/cases/create">
-                            <Plus className="mr-2 h-5 w-5" />
-                            Initiate New Case
-                        </Link>
-                    </Button>
-                )}
+                <Button asChild size="lg" className="shadow-lg shadow-primary/20">
+                    <Link href="/cases/create">
+                        <Plus className="mr-2 h-5 w-5" />
+                        Initiate New Case
+                    </Link>
+                </Button>
             </div>
 
             {/* Premium KPI Grid */}

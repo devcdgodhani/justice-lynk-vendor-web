@@ -88,7 +88,7 @@ export default function OrganizationPage() {
                             <Users className="h-5 w-5 text-primary" /> Team Composition
                         </h2>
                         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
-                            {membersRes?.total ?? 0} ACTIVE PERSONNEL IN SYSTEM
+                            {membersRes?.meta?.total ?? 0} ACTIVE PERSONNEL IN SYSTEM
                         </p>
                     </div>
                 </div>

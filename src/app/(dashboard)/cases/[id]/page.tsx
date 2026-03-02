@@ -44,7 +44,7 @@ const STATUSES: CaseStatus[] = ['OPEN', 'IN_PROGRESS', 'PENDING', 'CLOSED', 'ARC
 export default function CaseDetailPage() {
     const { id } = useParams<{ id: string }>();
     const router = useRouter();
-    const { can, isHydrated } = useAuthStore();
+    const { isHydrated } = useAuthStore();
     const [activeTab, setActiveTab] = useState<Tab>('Overview');
 
     const { data: caseData, isLoading: caseLoading } = useCase(id);

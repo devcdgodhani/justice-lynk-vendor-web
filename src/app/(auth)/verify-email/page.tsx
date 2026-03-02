@@ -62,7 +62,16 @@ function VerifyEmailContent() {
             }
             setVerified(true);
             toast.success('Email verified! Welcome to JusticeLynk 🎉');
-            setTimeout(() => router.replace('/dashboard'), 1500);
+            const userType = user!.userType;
+            let targetPath = '/dashboard';
+
+            if (userType === 'law_firm_admin' || userType === 'advocate') {
+                targetPath = '/plan-select';
+            } else if (userType === 'client') {
+                targetPath = '/dashboard';
+            }
+
+            setTimeout(() => router.replace(targetPath), 1500);
         } catch (err: any) {
             toast.error(err?.response?.data?.message || 'Invalid or expired OTP');
             setOtp(Array(OTP_LENGTH).fill(''));

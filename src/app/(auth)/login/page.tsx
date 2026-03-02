@@ -46,6 +46,26 @@ function LoginContent() {
                 return;
             }
 
+            // Account Pending Approval
+            if (loginData.approvalPending) {
+                router.push(`/account-pending?email=${encodeURIComponent(data.email)}`);
+                return;
+            }
+
+            // Account Rejected
+            if (loginData.approvalRejected) {
+                toast.error(`Application Rejected: ${loginData.approvalNote || 'Contact support for details.'}`, {
+                    duration: 10000,
+                });
+                return;
+            }
+
+            // Account Suspended
+            if (loginData.suspended) {
+                router.push(`/account-suspended?reason=${encodeURIComponent(loginData.approvalNote || '')}`);
+                return;
+            }
+
             // MFA required
             if (loginData.mfaRequired) {
                 if (loginData.mfaTempToken) sessionStorage.setItem('jl_mfa_temp', loginData.mfaTempToken);
@@ -55,7 +75,27 @@ function LoginContent() {
 
             if (loginData.user && loginData.accessToken && loginData.refreshToken) {
                 setAuth(loginData.user, loginData.accessToken, loginData.refreshToken);
-                router.push(redirect);
+                const user = loginData.user;
+
+                /* Plan check removed - partial access allows dashboard entry
+                if (!user.subscription && user.role !== 'super_admin') {
+                    router.push('/plan-select');
+                    return;
+                }
+                */
+
+                // Normal dashboard routing
+                // EXPLICITLY ignore /plan-select as a redirect target after login
+                if (redirect && redirect !== '/dashboard' && redirect !== '/plan-select') {
+                    router.push(redirect);
+                } else {
+                    const dashboardMap: Record<string, string> = {
+                        client: '/dashboard',
+                        advocate: '/professional',
+                        law_firm_admin: '/law-firm',
+                    };
+                    router.push(dashboardMap[user.userType] || '/dashboard');
+                }
             }
         } catch (err: any) {
             toast.error(err?.response?.data?.message || 'Invalid credentials');
