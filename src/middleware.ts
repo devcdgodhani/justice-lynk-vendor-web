@@ -8,6 +8,8 @@ const PUBLIC_ROUTES = [
     '/mfa-verify',
     '/mfa-backup-code',
     '/forgot-password',
+    '/account-pending',
+    '/account-suspended',
 ];
 
 const PROTECTED_PREFIXES = [
@@ -54,12 +56,11 @@ export function middleware(request: NextRequest) {
 
     const token = request.cookies.get('jl-access-token')?.value;
     const isPublic = PUBLIC_ROUTES.some((r) => pathname === r || pathname.startsWith(r + '?'));
-    const isStatusPage = ['/account-pending', '/account-suspended'].some((p) => pathname.startsWith(p));
     const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
 
     // ── 1. Unauthenticated ──────────────────────────────────────────────────
     if (!token) {
-        if (isProtected || isStatusPage || pathname === '/org-select') {
+        if (isProtected || pathname === '/org-select') {
             const url = new URL('/login', request.url);
             url.searchParams.set('redirect', pathname);
             return NextResponse.redirect(url);
@@ -109,7 +110,7 @@ export function middleware(request: NextRequest) {
     const authPagesToRedirect = ['/login', '/register', '/forgot-password'];
     const isAuthPage = authPagesToRedirect.some(p => pathname === p);
 
-    if (isAuthPage || isStatusPage || (pathname === '/plan-select' && hasPlan)) {
+    if (isAuthPage || pathname.startsWith('/account-pending') || pathname.startsWith('/account-suspended') || (pathname === '/plan-select' && hasPlan)) {
         const dashboardMap: Record<string, string> = {
             client: '/dashboard',
             advocate: '/professional',

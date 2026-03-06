@@ -80,7 +80,7 @@ export default function RegisterProfessionalPage() {
     };
 
     return (
-        <div className="glass rounded-3xl p-10 shadow-2xl animate-fade-in border border-white/10 max-w-2xl mx-auto">
+        <div className="glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl animate-fade-in border border-border/20 mx-auto">
             <div className="flex items-center gap-4 mb-8">
                 <button onClick={() => step === 2 ? setStep(1) : router.push('/register')} className="p-2 rounded-xl border border-border/40 hover:bg-muted transition-colors group">
                     {step === 2 ? <ChevronLeft className="w-4 h-4 text-muted-foreground" /> : <X className="w-4 h-4 text-muted-foreground" />}
@@ -96,7 +96,7 @@ export default function RegisterProfessionalPage() {
             {/* Step 1: Personal Details */}
             {step === 1 && (
                 <form onSubmit={personalForm.handleSubmit(onPersonalSubmit)} className="space-y-5 animate-slide-up">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">First Name</label>
                             <Input {...personalForm.register('firstName')} placeholder="John" className="h-12 rounded-xl" />
@@ -118,7 +118,7 @@ export default function RegisterProfessionalPage() {
                         <Input {...personalForm.register('phone')} placeholder="+91 98765 43210" className="h-12 rounded-xl" />
                         {personalForm.formState.errors.phone && <p className="text-destructive text-[10px] px-1 font-bold italic">{personalForm.formState.errors.phone.message}</p>}
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Security Key</label>
                             <Input {...personalForm.register('password')} type="password" placeholder="********" className="h-12 rounded-xl" />
@@ -137,7 +137,7 @@ export default function RegisterProfessionalPage() {
             {/* Step 2: Professional Credentials */}
             {step === 2 && (
                 <form onSubmit={professionalForm.handleSubmit(onFinalSubmit)} className="space-y-5 animate-slide-up">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Bar Reg. Number</label>
                             <Input {...professionalForm.register('barRegistration')} placeholder="BAR/2024/001" className="h-12 rounded-xl" />
@@ -155,7 +155,7 @@ export default function RegisterProfessionalPage() {
                         <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Practice Areas</label>
                         <Input {...professionalForm.register('practiceAreas')} placeholder="Supreme Court, High Court, NCLT" className="h-12 rounded-xl" />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Primary Languages</label>
                             <Input {...professionalForm.register('languages')} placeholder="English, Hindi, etc." className="h-12 rounded-xl" />

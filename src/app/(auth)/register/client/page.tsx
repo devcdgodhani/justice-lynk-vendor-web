@@ -51,7 +51,7 @@ export default function RegisterClientPage() {
     };
 
     return (
-        <div className="glass rounded-3xl p-10 shadow-2xl animate-fade-in border border-white/10 max-w-xl mx-auto">
+        <div className="glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl animate-fade-in border border-border/20 mx-auto">
             <div className="flex items-center gap-4 mb-8">
                 <button onClick={() => router.push('/register')} className="p-2 rounded-xl border border-border/40 hover:bg-muted transition-colors group">
                     <X className="w-4 h-4 text-muted-foreground group-hover:text-foreground transition-colors" />
@@ -63,7 +63,7 @@ export default function RegisterClientPage() {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">First Name</label>
                         <Input
@@ -104,7 +104,7 @@ export default function RegisterClientPage() {
                     />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 border-t border-border/20 pt-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-border/20 pt-5">
                     <div className="space-y-2">
                         <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Security Key</label>
                         <Input

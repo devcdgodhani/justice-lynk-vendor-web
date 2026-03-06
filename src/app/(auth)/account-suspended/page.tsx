@@ -2,13 +2,21 @@
 
 import { Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { ShieldAlert, Mail, Phone, ChevronRight, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useAuthStore } from '@/store/auth.store';
 
 function AccountSuspendedContent() {
     const searchParams = useSearchParams();
     const reason = searchParams.get('reason') || 'Administrative policy violation or security concern.';
+    const router = useRouter();
+    const { clearAuth } = useAuthStore();
+
+    const handleExitSession = () => {
+        clearAuth();
+        router.push('/login');
+    };
 
     return (
         <div className="glass rounded-3xl p-12 shadow-2xl animate-fade-in border border-destructive/20 max-w-2xl mx-auto text-center">
@@ -53,11 +61,13 @@ function AccountSuspendedContent() {
             </div>
 
             <div className="grid grid-cols-2 gap-4 mt-12 pt-8 border-t border-border/20">
-                <Link href="/login" className="w-full">
-                    <Button variant="outline" className="w-full h-14 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] border-border/40">
-                        <LogOut className="w-4 h-4 mr-2" /> Return to Login
-                    </Button>
-                </Link>
+                <Button
+                    variant="outline"
+                    onClick={handleExitSession}
+                    className="w-full h-14 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] border-border/40"
+                >
+                    <LogOut className="w-4 h-4 mr-2" /> Exit Session
+                </Button>
                 <Button variant="destructive" className="h-14 rounded-2xl font-black uppercase tracking-[0.2em] text-[10px] shadow-xl group">
                     Contact Compliance Desk <ChevronRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>

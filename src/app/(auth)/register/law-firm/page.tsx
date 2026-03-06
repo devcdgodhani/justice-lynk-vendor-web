@@ -80,7 +80,7 @@ export default function RegisterLawFirmPage() {
     };
 
     return (
-        <div className="glass rounded-3xl p-10 shadow-2xl animate-fade-in border border-white/10 max-w-2xl mx-auto">
+        <div className="glass rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl animate-fade-in border border-border/20 mx-auto">
             <div className="flex items-center gap-4 mb-8">
                 <button onClick={() => step === 2 ? setStep(1) : router.push('/register')} className="p-2 rounded-xl border border-border/40 hover:bg-muted transition-colors group">
                     {step === 2 ? <ChevronLeft className="w-4 h-4 text-muted-foreground" /> : <X className="w-4 h-4 text-muted-foreground" />}
@@ -96,7 +96,7 @@ export default function RegisterLawFirmPage() {
             {/* Step 1: Admin Details */}
             {step === 1 && (
                 <form onSubmit={adminForm.handleSubmit(onAdminSubmit)} className="space-y-5 animate-slide-up">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Admin First Name</label>
                             <Input {...adminForm.register('firstName')} placeholder="John" className="h-12 rounded-xl" />
@@ -114,7 +114,7 @@ export default function RegisterLawFirmPage() {
                         <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Contact Number</label>
                         <Input {...adminForm.register('phone')} placeholder="+91 98765 43210" className="h-12 rounded-xl" />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Master Key</label>
                             <Input {...adminForm.register('password')} type="password" placeholder="********" className="h-12 rounded-xl" />
@@ -137,7 +137,7 @@ export default function RegisterLawFirmPage() {
                         <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Legal Firm Name</label>
                         <Input {...firmForm.register('firmName')} placeholder="JusticeLynk Associate Partners" className="h-12 rounded-xl" />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Firm Reg. No</label>
                             <Input {...firmForm.register('registrationNumber')} placeholder="REG-2024-XXXX" className="h-12 rounded-xl" />
@@ -155,7 +155,7 @@ export default function RegisterLawFirmPage() {
                         <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Practice Specializations <span className="opacity-50">(comma separated)</span></label>
                         <Input {...firmForm.register('specializations')} placeholder="Corporate Law, Litigation, Real Estate" className="h-12 rounded-xl" />
                     </div>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.15em] px-1">Firm Contact Email <span className="opacity-50">(opt)</span></label>
                             <Input {...firmForm.register('firmEmail')} placeholder="contact@firm.com" className="h-12 rounded-xl" />
